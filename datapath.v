@@ -8,21 +8,19 @@ module Datapath(
     wire [3:0] ALUCntl;
     wire RegWrite, Negative, Carry, Overflow, Zero;
     
-    //Declare new Wires
-    wire [31:0] SignExtended, ShiftTwo, BranchAdd;
+    //Declare new Wires 
+    wire [31:0] SignExtended, ShiftTwo, BranchAdd, DataMem_out;
     wire [1:0] Branch;
     wire RegDst, MemtoReg, MemRead, MemWrite, ALUSrc;
-    
     //Output Wire for muxes
-    wire [5:0] RegDst_Mux;
+    wire [4:0] RegDst_Mux;
     wire [31:0] ALUSrc_Mux, MemtoReg_Mux, Branch_Mux;
     //Mux Logic
     assign RegDst_Mux = (RegDst == 1) ? iMemOut[15:11] : iMemOut[20:16];
-    assign ALUSrc_Mux = (ALUSrc == 1) ? SignExtend : rt;
-    assign MemtoReg_Mux = (RegDst == 1) ? MemRead : Dout;
+    assign ALUSrc_Mux = (ALUSrc == 1) ? SignExtended : rt;
+    assign MemtoReg_Mux = (MemtoReg == 1) ? MemRead : Dout;
     // Branch Mux: if(Branch&&Zero)||(Branch&&!Zero) simplifies to if(branch)
     assign Branch_Mux = (Branch == 1) ? BranchAdd : pcAddOut;
-      // if(Branch&&Zero)||(Branch&&!Zero) simplifies to if(branch)
     
     //Building Datapath
     
@@ -45,8 +43,13 @@ module Datapath(
         .Func(iMemOut[5:0]), 
         .RegWrite(RegWrite), 
         .ALUCntl(ALUCntl), 
-        .RegDst(RegDst));
-        
+        .RegDst(RegDst),
+        .Branch(Branch),
+        .MemRead(MemRead),
+        .MemtoReg(MemtoReg),
+        .MemWrite(MemWrite),
+        .ALUSrc(ALUSrc));
+                
     regfile32 rf(
         .clk(clk), 
         .reset(reset), 
@@ -60,7 +63,7 @@ module Datapath(
     
     SignExtend Extender(
         .Instruction(iMemOut[15:0]), 
-        .SignExtended(SignExtend)); 
+        .SignExtended(SignExtended)); 
     
     ShiftLeft2 Shifter(
         .SignExtended(SignExtended), 
