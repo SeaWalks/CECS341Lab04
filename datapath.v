@@ -18,7 +18,8 @@ module Datapath(
     //Mux Logic
     assign RegDst_Mux = (RegDst == 1) ? iMemOut[15:11] : iMemOut[20:16];
     assign ALUSrc_Mux = (ALUSrc == 1) ? SignExtended : rt;
-    assign MemtoReg_Mux = (MemtoReg == 1) ? MemRead : Dout;
+    assign MemtoReg_Mux = (MemtoReg == 1) ? DataMem_out : Dout;
+    // Branch Mux: if(Branch&&Zero)||(Branch&&!Zero) simplifies to if(branch)
     assign Branch_Mux = ((Branch[0]&&Zero)||((Branch[1]&&(!Zero)))) ? BranchAdd : pcAddOut;
     
     //Building Datapath
