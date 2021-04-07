@@ -1,5 +1,6 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
+//Mango
 //CECS341 Lab 04
 //3/16/21
 //////////////////////////////////////////////////////////////////////////////////
@@ -21,7 +22,7 @@ module control(
         if (Op == 6'b0) begin
             RegWrite = 1'b1;
             RegDst = 1'b1;
-            Branch = 2'b0;
+            Branch = 2'b00;
             MemRead = 1'b0;
             MemWrite = 1'b0;
             MemtoReg = 1'b0;
@@ -39,7 +40,7 @@ module control(
                 6'h2A: ALUCntl = 4'b0101; //Slt
                 6'h2B: ALUCntl = 4'b1111; //Slt unsigned
                 default: ALUCntl = 4'b0000; 
-            endcase
+            endcase 
         end
         else begin  
             case(Op)
@@ -51,7 +52,7 @@ module control(
                         MemRead    = 1'b0;      // only occurs during loadword operation
                         MemWrite   = 1'b0;      // only occurs during storeword operation
                         MemtoReg   = 1'b0;      // this is 0 when the result of the operation is written back into the register file
-                        ALUSrc     = 1'b1;      // only when the second operand is SE Immed. instead of rt. False for all R type instructions?
+                        ALUSrc     = 1'b1;      // only when the second operand is SE Immed
                         end 
                 6'h09: begin                    // Add Immediate Unsigned
                         ALUCntl = 4'b0010;      // AddiU ALU Control
@@ -75,17 +76,17 @@ module control(
                        end        
                 6'h0D: begin                    // Or Immediate
                         ALUCntl = 4'b0001;      // Ori ALU Control
-                        RegWrite   = 1'b0;      
+                        RegWrite   = 1'b1;      //SET TO ONE  
                         RegDst     = 1'b0;       
                         Branch     = 2'b00;      
                         MemRead    = 1'b0;      
                         MemWrite   = 1'b0;       
                         MemtoReg   = 1'b0;      
-                        ALUSrc     = 1'b0;      
+                        ALUSrc     = 1'b1;       //SET TO ONE
                        end
-                6'h23: begin                    // Loadword
-                        ALUCntl = 4'b0010;   // Lw ALU Control
-                        RegWrite   = 1'b1;      
+                6'h23: begin                     // Loadword
+                        ALUCntl = 4'b0010;       // Lw ALU Control
+                        RegWrite   = 1'b1;        
                         RegDst     = 1'b0;      
                         Branch     = 2'b00;       
                         MemRead    = 1'b1;       
@@ -144,14 +145,14 @@ module control(
                         ALUSrc = 1'b1;     //Uses SignExtendImm on the greensheet
                         end
                 default: begin
-                        RegWrite = 1'bx;   
-                        ALUCntl = 4'bxxxx; 
-                        RegDst = 1'bx;     
-                        Branch = 2'bx;     
-                        MemRead = 1'bx;    
-                        MemWrite = 1'bx;   
-                        MemtoReg = 1'bx;  
-                        ALUSrc = 1'bx;    
+                        RegWrite = 1'b0;   
+                        ALUCntl = 4'b0; 
+                        RegDst = 1'b0;     
+                        Branch = 2'b0;     
+                        MemRead = 1'b0;    
+                        MemWrite = 1'b0;   
+                        MemtoReg = 1'b0;  
+                        ALUSrc = 1'b0;    
                         end
           
         endcase
