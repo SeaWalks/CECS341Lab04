@@ -1,16 +1,13 @@
 `timescale 1ns / 1ps
-/*
-Eric Chhour
-Daniel Secundino
-CECS341
-Lab04 ALU
-*/
+//////////////////////////////////////////////////////////////////////////////////
+//Eric Chhour * Dante Secundino
+//CECS341 Lab 04
+//3/16/21
+//////////////////////////////////////////////////////////////////////////////////
 module alu(
            input [31:0] A,B,  // ALU 32-bit Inputs                 
-           input [3:0] ALUCntrl,// ALU Selection
-           output reg [31:0] ALU_Out, // ALU 32-bit Output
-           
-           
+           input [3:0] ALUCntl,// ALU Selection
+           output reg [31:0] ALU_Out, // ALU 32-bit Output           
            output reg C, // Carry Out Flag
            output reg V, // Overflow Flag
            output reg N, // Negative Flag
@@ -23,7 +20,7 @@ module alu(
     always @(*) begin
         A_s = A;
         B_s = B;
-        case(ALUCntrl)
+        case(ALUCntl)
             4'b0000: begin//AND 
                   ALU_Out = A & B;
                   C = 1'bx; //Set to X because it doesnt matter
@@ -96,18 +93,34 @@ module alu(
                     V = 1'b1;
                else
                     V = 1'b0;
-            end
+               end
             
             4'b1111: begin //Set Less Than Signed
-             
-            end
+                C = 1'bx;
+               
+                V = 1'bx;
+                if($signed(A) < $signed(B))
+                    ALU_Out = 32'b1;
+                else
+                    ALU_Out = 32'b0;
+                N = ALU_Out[31];
+                end
             
             4'b0101: begin //Set less than Unsigned
-            
-            end
+                
+                C = 1'bx;
+                V = 1'bx;
+                if(A < B)
+                    ALU_Out = 32'b1;
+                else
+                    ALU_Out = 32'b0;
+                N = ALU_Out[31];
+                end
+                
+               
                
             default: begin
-                ALU_Out = 32'bx;
+                ALU_Out = 31'bx;
                 {C, V, N} = 3'bxxx;
             end
             
